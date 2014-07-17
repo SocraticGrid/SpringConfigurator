@@ -150,34 +150,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.16</version>
-				<configuration>
-					<!--- Not used <junitArtifactName>org.junit.:com.springsource.org.junit</junitArtifactName> -->
-					<systemProperties>
-						<property>
-							<name>java.util.logging.config.file</name>
-							<value>src/it/resources/logging.properties</value>
-						</property>
-					</systemProperties>
-				</configuration>
-				<executions>
-					<execution>
-						<id>integration-test</id>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>verify</id>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 </project>
