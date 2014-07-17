@@ -1,83 +1,73 @@
 package org.socraticgrid.spring.tools.configuration;
 
-import java.io.FileNotFoundException;
-import java.util.Iterator;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
-public class SpringConfigurator {
 
-	private final Logger logger = LoggerFactory
-			.getLogger(SpringConfigurator.class);
+/**
+ *
+ * This class provides property configuration for all beans after
+ * the init method if one is specified is called.
+ * 
+ * In the life of a Spring bean this is known as ProcessAfterInitialization
+ * during the ApplicationContext startup.
+ * 
+ * There does exist another point of configuration - ProcessBeforeInitialization
+ * which can be implemented but in this case is not.
+ * 
+ *
+ */
+public class SpringConfigurator implements BeanPostProcessor, Ordered {
+
+	//The order in which this BeanPostProcessor will be called
+	private static final int ORDER = 0;
+
+	@Autowired
+	private ApplicationContext applicationContext;
+
+	private final Logger logger = LoggerFactory.getLogger(SpringConfigurator.class);
 
 	private String configurationFileName;
 	private String taskQueueName;
+	private ConfigurationTaskQueue taskQueue;
+	private ApplicationContext taskContext;
+	private ExpressionParser parser = new SpelExpressionParser();
 
-	public boolean configure(ApplicationContext subjectCtx)
+
+	public Object configure(Object bean, String beanName)
 	{
-		boolean out=false;
-		try
+		//Lazy initialization - cannot be put into init so called once here.
+		if (configurationFileName != null && taskContext == null)
 		{
-			String[] locations = new String[1];
-			if (configurationFileName != null)
-			{
-				locations[0]=configurationFileName;
-				
-				ApplicationContext ctx = new ClassPathXmlApplicationContext(locations,subjectCtx);
-				ExpressionParser parser = new SpelExpressionParser();
-				
-				ConfigurationTaskQueue taskQueue = ctx.getBean(taskQueueName,	ConfigurationTaskQueue.class);
-				
-				if (taskQueue != null)
-				{
-					Iterator<ConfigurationTask> itr = taskQueue.getItems().iterator();
-					while (itr.hasNext())
-					{
-						ConfigurationTask item = itr.next();
-						if (item.configure(ctx,parser)==false)
-							{
-								logger.error("Failed to configure item: "+item.toString());
-							}
-					}
-				}
-				else
-				{
-					logger.info(taskQueueName+" Not found in configuration file");
-					out = true;
-				}
-			}
-			else
-			{
-				logger.info("No configuration file name defined");
-				out = true;
-			}
-			
+			taskContext = new ClassPathXmlApplicationContext(
+					new String[]{configurationFileName} , applicationContext);
+			taskQueue = taskContext.getBean(taskQueueName, ConfigurationTaskQueue.class);
+			logger.debug("********* Completed Initialization for *SpringConfigurator*");
 		}
-		catch(BeanDefinitionStoreException e)
+
+		if( taskContext != null && taskQueue != null)
 		{
-			if (e.getCause() instanceof FileNotFoundException)
-			{
-				logger.warn(configurationFileName+" is not found on the path, running with application defaults");
+			List<ConfigurationTask> tasks = taskQueue.getItems(beanName);
+			if(tasks == null){
+				return bean;
 			}
-			else
-			{
-				//logger.error("Cause "+e.getCause().toString());
-				logger.error("Failed on loading "+configurationFileName,e);	
+
+			for(ConfigurationTask task : tasks) {
+				bean = task.configure(taskContext, parser);
 			}
 		}
-		catch(Throwable e)
-		{
-	
-			logger.error("Failed on loading "+configurationFileName,e);
-		}
-		
-		return out;
-		
+
+		return bean;
 	}
 
 	/**
@@ -110,7 +100,35 @@ public class SpringConfigurator {
 		this.taskQueueName = taskQueueName;
 	}
 
+	
+	/**
+	 * Will process the bean after init is called
+	 */
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName)
+			throws BeansException {
+
+		logger.debug("********* Calling ProcessAfterInitialization for *"+beanName+"*");
+		//Configure the bean 
+		return configure(bean, beanName);
+	}
+
+	/**
+	 * Will process the bean before init is called.
+	 */
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName)
+			throws BeansException {
+
+		logger.debug("********* Calling ProcessBeforeInitialization for *"+beanName+"*");
+		//Open for 
+		return bean;
+	}
 
 
+	@Override
+	public int getOrder() {
+		return ORDER;
+	}
 
 }

@@ -5,7 +5,7 @@
 
 
 	<bean id="RuntimeConfig" name="RuntimeConfig"
-		class="org.socraticgrid.hl7.services.eps.internal.configuration.SpringConfigurator">
+		class="org.socraticgrid.spring.tools.configuration.SpringConfigurator">
 		<property name="configurationFileName" value="/RuntimeConfiguration.xml"></property>
 		<property name="taskQueueName" value="StandardConfig"></property>
 	</bean>

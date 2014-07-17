@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean id="StandardConfig" name="StandardConfig"
+		class="org.socraticgrid.spring.tools.configuration.ConfigurationTaskQueue">
+		<property name="items">
+			<list>
+				<bean
+					class="org.socraticgrid.spring.tools.configuration.PropertyAssignmentTask">
+					<property name="beanName" value="ConfigurableBean"></property>
+					<property name="property" value="configurableName" />
+					<property name="value" value="SpringConfigurator was here!" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

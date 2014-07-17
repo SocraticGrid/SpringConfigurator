@@ -12,7 +12,7 @@ public class PropertyAssignmentTask implements ConfigurationTask {
 			.getLogger(PropertyAssignmentTask.class);
 	
 	
-	private String name;
+	private String beanName;
 	private String property;
 	private Object value;
 	
@@ -20,16 +20,16 @@ public class PropertyAssignmentTask implements ConfigurationTask {
 	/**
 	 * @return the bean name
 	 */
-	public String getName() {
-		return name;
+	public String getBeanName() {
+		return beanName;
 	}
 
 	/**
 	 * @param name
 	 *            the bean name to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setBeanName(String name) {
+		this.beanName = name;
 	}
 
 	/**
@@ -62,22 +62,20 @@ public class PropertyAssignmentTask implements ConfigurationTask {
 		this.value = value;
 	}
 
-	public boolean configure(ApplicationContext ctx, ExpressionParser parser) {
-		boolean out = false;
-		Object bean = ctx.getBean(name);
+	public Object configure(ApplicationContext ctx, ExpressionParser parser) {
+		Object bean = ctx.getBean(beanName);
 		if (bean != null) {
 			try {
 				StandardEvaluationContext evalContext = new StandardEvaluationContext(
 						bean);
 				parser.parseExpression(property).setValue(evalContext,
 						value);
-				out = true;
 			} catch (Throwable e) {
 				logger.error("Problem configuring " + this.toString(), e);
 			}
 
 		}
-		return out;
+		return bean;
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +83,7 @@ public class PropertyAssignmentTask implements ConfigurationTask {
 	 */
 	@Override
 	public String toString() {
-		return "PropertyAssignmentTask [name=" + name + ", property="
+		return "PropertyAssignmentTask [name=" + beanName + ", property="
 				+ property + ", value=" + value + "]";
 	}
 
