@@ -88,7 +88,7 @@ public class AddToListTask  implements ConfigurationTask {
 	 */
 	@Override
 	public String toString() {
-		return "PropertyAssignmentTask [name=" + beanName + ", property="
+		return "AddToListTask [name=" + beanName + ", property="
 				+ property + ", value=" + value + "]";
 	}
 
