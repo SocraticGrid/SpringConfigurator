@@ -4,6 +4,35 @@
 	<groupId>org.socraticgrid.spring.tools</groupId>
 	<artifactId>SpringConfigurator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>Spring Configurator</name>
+	<description>The component is used to allow the spring application context to be updated based in local configutation options</description>
+	<url>https://github.com/SocraticGrid/SpringConfigurator</url>
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>Jerry Goodnough</name>
+			<email>jgoodnough@cognitivemedicine.com</email>
+			<organization>Cognitive Medical Systems</organization>
+			<organizationUrl>http://www.cognitivemedicine.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Steven Elliot</name>
+			<email>selliott@cognitivemedicine.com</email>
+			<organization>Cognitive Medical Systems</organization>
+			<organizationUrl>http://www.cognitivemedicine.com</organizationUrl>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:git@github.com:SocraticGrid/SpringConfigurator.git</connection>
+		<developerConnection>scm:git:git@github.com:SocraticGrid/SpringConfigurator.git</developerConnection>
+		<url>git@github.com:SocraticGrid/SpringConfigurator.git</url>
+	</scm>
 
 	<properties>
 
@@ -97,6 +126,37 @@
 						</manifest>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<show>private</show>
+					<nohelp>true</nohelp>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<!-- Provide Logging control in Unit Test & Exclude Integration tests -->
 			<plugin>
