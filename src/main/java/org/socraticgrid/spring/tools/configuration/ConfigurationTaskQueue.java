@@ -18,7 +18,7 @@ public class ConfigurationTaskQueue {
 	}
 
 	/**
-	 * @param items
+	 * @param taskList
 	 *            the items to set
 	 */
 	public void setItems(List<ConfigurationTask> taskList) {
